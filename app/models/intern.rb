@@ -46,6 +46,8 @@ class Intern < ApplicationRecord
   end
 
   def self.import(file)
+    interns_records = []
+    rows = 0
     CSV.foreach(file.path, headers:true) do |row|
       thoughtworks_email = Email.create(category: 'ThoughtWorks', address: row['thoughtworks_email'])
       personal_email = Email.create(category: 'Personal', address: row['personal_email'])
@@ -66,8 +68,13 @@ class Intern < ApplicationRecord
           slack: slack,
           dropbox: dropbox
       )
-      imported_intern.save
+      rows += 1
+      if imported_intern.save
+      else
+        interns_records.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+      end
     end
+    return interns_records
   end
 
   private

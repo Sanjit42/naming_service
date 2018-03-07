@@ -11,7 +11,7 @@ class InternsController < ApplicationController
 
   def import
     @interns = Intern.import(params[:file])
-    redirect_to root_url
+    render 'interns/importResult'
   end
 
   def show
