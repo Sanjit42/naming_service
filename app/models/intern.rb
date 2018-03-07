@@ -52,7 +52,7 @@ class Intern < ApplicationRecord
       github = Github.create(row['username'])
       slack = Slack.create(row['username'])
       dropbox = Dropbox.create(row['username'])
-      Intern.create!(
+      imported_intern = Intern.new(
           emp_id: row['emp_id'],
           display_name: row['display_name'],
           first_name: row['first_name'],
@@ -66,6 +66,7 @@ class Intern < ApplicationRecord
           slack: slack,
           dropbox: dropbox
       )
+      imported_intern.save
     end
   end
 
