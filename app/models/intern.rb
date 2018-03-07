@@ -58,9 +58,9 @@ class Intern < ApplicationRecord
       CSV.foreach(file.path, headers: true) do |row|
         thoughtworks_email = Email.create(category: 'ThoughtWorks', address: row['thoughtworks_email'])
         personal_email = Email.create(category: 'Personal', address: row['personal_email'])
-        github = Github.create(row['username'])
-        slack = Slack.create(row['username'])
-        dropbox = Dropbox.create(row['username'])
+        github = Github.create(username: row['github_username'])
+        slack = Slack.create(username: row['slack_username'])
+        dropbox = Dropbox.create(username: row['dropbox_username'])
         imported_intern = Intern.new(
             emp_id: row['emp_id'],
             display_name: row['display_name'],
