@@ -8,4 +8,12 @@
     <p>Gender must be one of the following</p>
     <p></p>
   </div>
+
+  <div>
+    <%= form_tag import_interns_path, multipart: true do%>
+      <%= file_field_tag :file%>
+      <%= submit_tag "Import CSV"%>
+    <% end%>
+  </div>
+
 </div>

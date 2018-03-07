@@ -1,4 +1,5 @@
 class Intern < ApplicationRecord
+  require 'csv'
 
   has_many :emails, dependent: :delete_all
   has_one :github, dependent: :destroy
@@ -42,6 +43,30 @@ class Intern < ApplicationRecord
 
   def self.search search_term
     joins(:emails).joins(:github).joins(:slack).joins(:dropbox).where(search_query, {:search_term => "%#{search_term}%"})
+  end
+
+  def self.import(file)
+    CSV.foreach(file.path, headers:true) do |row|
+      thoughtworks_email = Email.create(category: 'ThoughtWorks', address: row['thoughtworks_email'])
+      personal_email = Email.create(category: 'Personal', address: row['personal_email'])
+      github = Github.create(row['username'])
+      slack = Slack.create(row['username'])
+      dropbox = Dropbox.create(row['username'])
+      Intern.create!(
+          emp_id: row['emp_id'],
+          display_name: row['display_name'],
+          first_name: row['first_name'],
+          last_name: row['last_name'],
+          batch: row['batch'],
+          dob: row['dob'],
+          gender: row['gender'],
+          phone_number: row['phone_number'],
+          emails: [thoughtworks_email, personal_email],
+          github: github,
+          slack: slack,
+          dropbox: dropbox
+      )
+    end
   end
 
   private

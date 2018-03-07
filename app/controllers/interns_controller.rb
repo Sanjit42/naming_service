@@ -9,6 +9,11 @@ class InternsController < ApplicationController
     @intern.build_dependents
   end
 
+  def import
+    @interns = Intern.import(params[:file])
+    redirect_to root_url
+  end
+
   def show
     @intern = Intern.find(params[:id])
   end
