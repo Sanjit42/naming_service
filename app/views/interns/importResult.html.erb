@@ -1,41 +1,47 @@
 <div class=container>
-  <div class=details-errors>
-    <h1>Error Details</h1>
-    <% @interns.each do |intern|  %>
+  <% if @interns[:invalid_attribute].empty? %>
+    <div class=details-errors>
+      <h1>Error Details</h1>
+      <% @interns[:interns_records].each do |intern|  %>
 
-      <table class="table table-bordered">
-      <div><%= "Row no:  #{intern[:row_number]}" %></div>
-        <thead class="thead-light">
+        <table class="table table-bordered">
+        <div><%= "Row no:  #{intern[:row_number]}" %></div>
+          <thead class="thead-light">
+            <tr>
+              <th>Emp Id</th>
+              <th>Display Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Batch</th>
+              <th>Dob</th>
+              <th>Gender</th>
+            </tr>
+          </thead>
           <tr>
-            <th>Emp Id</th>
-            <th>Display Name</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Batch</th>
-            <th>Dob</th>
-            <th>Gender</th>
+              <td><%= intern[:intern_details][0] %></td>
+              <td><%= intern[:intern_details][1] %></td>
+              <td><%= intern[:intern_details][2] %></td>
+              <td><%= intern[:intern_details][3] %></td>
+              <td><%= intern[:intern_details][4] %></td>
+              <td><%= intern[:intern_details][5] %></td>
+              <td><%= intern[:intern_details][6] %></td>
           </tr>
-        </thead>
-        <tr>
-            <td><%= intern[:intern_details][0] %></td>
-            <td><%= intern[:intern_details][1] %></td>
-            <td><%= intern[:intern_details][2] %></td>
-            <td><%= intern[:intern_details][3] %></td>
-            <td><%= intern[:intern_details][4] %></td>
-            <td><%= intern[:intern_details][5] %></td>
-            <td><%= intern[:intern_details][6] %></td>
-        </tr>
-      </table>
-        <div>
-          <h2>
-            <%= pluralize(intern[:errors].count, "error") %>
-          </h2>
-        </div>
-        <ul>
-          <% intern[:errors].each do |msg| %>
-           <li><%= msg %></li>
-          <% end %>
-        </ul>
-    <% end %>
-  </div>
+        </table>
+          <div>
+            <h2>
+              <%= pluralize(intern[:errors].count, "error") %>
+            </h2>
+          </div>
+          <ul>
+            <% intern[:errors].each do |msg| %>
+             <li><%= msg %></li>
+            <% end %>
+          </ul>
+      <% end %>
+    </div>
+  <% else%>
+    <div>
+      <h2> Invalid CSV File!! Please pass valid CSV file or follow the Instractions </h2>
+    </div>
+  <% end %>
 </div>

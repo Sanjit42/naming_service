@@ -17,6 +17,7 @@ class Intern < ApplicationRecord
   validates :batch, numericality: true, if: :batch_present?
   validates :gender, inclusion: { in: %w(male female others) }
   validate :validate_dob
+  validate :validate_gender
 
   scope :emp_id, -> (emp_id) { where emp_id: emp_id }
   scope :display_name, -> (display_name) { where display_name: display_name }
@@ -46,35 +47,45 @@ class Intern < ApplicationRecord
   end
 
   def self.import(file)
-    interns_records = []
-    rows = 0
-    CSV.foreach(file.path, headers:true) do |row|
-      thoughtworks_email = Email.create(category: 'ThoughtWorks', address: row['thoughtworks_email'])
-      personal_email = Email.create(category: 'Personal', address: row['personal_email'])
-      github = Github.create(row['username'])
-      slack = Slack.create(row['username'])
-      dropbox = Dropbox.create(row['username'])
-      imported_intern = Intern.new(
-          emp_id: row['emp_id'],
-          display_name: row['display_name'],
-          first_name: row['first_name'],
-          last_name: row['last_name'],
-          batch: row['batch'],
-          dob: row['dob'],
-          gender: row['gender'],
-          phone_number: row['phone_number'],
-          emails: [thoughtworks_email, personal_email],
-          github: github,
-          slack: slack,
-          dropbox: dropbox
-      )
-      rows += 1
-      if imported_intern.save
-      else
-        interns_records.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+    allowed_attributes = ["emp_id", "display_name", "first_name", "last_name", "batch", "dob", "gender", "thoughtworks_email", "personal_email", "phone_number", "github_username", "slack_username", "dropbox_username"]
+    invalid_attribute = validate_csv_header file, allowed_attributes
+    interns = {}
+    interns[:invalid_attribute] = invalid_attribute
+
+    if invalid_attribute.empty?
+      interns_records = []
+      rows = 0
+      CSV.foreach(file.path, headers: true) do |row|
+        thoughtworks_email = Email.create(category: 'ThoughtWorks', address: row['thoughtworks_email'])
+        personal_email = Email.create(category: 'Personal', address: row['personal_email'])
+        github = Github.create(row['username'])
+        slack = Slack.create(row['username'])
+        dropbox = Dropbox.create(row['username'])
+        imported_intern = Intern.new(
+            emp_id: row['emp_id'],
+            display_name: row['display_name'],
+            first_name: row['first_name'],
+            last_name: row['last_name'],
+            batch: row['batch'],
+            dob: row['dob'],
+            gender: row['gender'],
+            phone_number: row['phone_number'],
+            emails: [thoughtworks_email, personal_email],
+            github: github,
+            slack: slack,
+            dropbox: dropbox
+        )
+        rows += 1
+          if imported_intern.save
+          else
+            interns_records.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+          end
       end
+      interns[:interns_records] = interns_records
+      return interns
+    else
+      return interns
     end
-    return interns_records
   end
 
   private
@@ -88,10 +99,33 @@ class Intern < ApplicationRecord
     %w(emp_id display_name first_name last_name emails.address github_info.username slack_info.username dropbox_info.username )
   end
 
+  def self.validate_csv_header file, allowed_attributes
+    invalid_attribute = []
+    attributes_passed_by_csv = []
+    CSV.foreach(file.path, headers: true) do |row|
+      row.to_hash.select do |k, v|
+        attributes_passed_by_csv.push(k)
+      end
+
+      attributes_passed_by_csv.each do |attr|
+        if !allowed_attributes.include?(attr)
+          invalid_attribute.push(attr)
+        end
+      end
+    end
+    return invalid_attribute
+  end
 
   def validate_dob
     if dob != nil && dob >= Date.current
       errors.add('Date of birth', 'must be past')
+    end
+  end
+
+  def validate_gender
+    if gender.blank? || gender.downcase == 'male' || gender.downcase == 'female' || gender.downcase == 'other'
+      else
+      errors.add('Gender must be', 'Male, Female or Other')
     end
   end
 
