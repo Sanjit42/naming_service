@@ -10,6 +10,8 @@ class InternsController < ApplicationController
   end
 
   def import
+    @date = Date.today
+    @file_name = params[:file].original_filename
     @interns = Intern.import(params[:file])
     render 'interns/importResult'
   end

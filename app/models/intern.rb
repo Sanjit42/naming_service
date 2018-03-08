@@ -76,11 +76,13 @@ class Intern < ApplicationRecord
             dropbox: dropbox
         )
         rows += 1
-          if imported_intern.save
-          else
-            interns_records.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
-          end
+        if !imported_intern.save
+          interns_records.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+        end
       end
+      interns[:total_rows] = rows
+      interns[:failed_rows] = interns_records.count
+      interns[:success_rows] = rows - interns_records.count
       interns[:interns_records] = interns_records
       return interns
     else
