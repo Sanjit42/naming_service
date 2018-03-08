@@ -13,7 +13,7 @@ class InternsController < ApplicationController
     @date = Date.today
     @file_name = params[:file].original_filename
     @interns = Intern.import(params[:file])
-    render 'interns/importResult'
+    render 'interns/bulkImportResult'
   end
 
   def show

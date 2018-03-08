@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  get 'interns/import'
   get 'interns/bulkImport'
   get '', to: redirect('/interns')
 

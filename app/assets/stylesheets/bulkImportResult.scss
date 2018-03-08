@@ -1,0 +1,45 @@
+@import "variables";
+
+.heading {
+  margin-bottom: 50px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.summary, .details-errors, .invalid-csv-file {
+  background-color: $secondary-color-8;
+  padding: 50px;
+  border-color: #2E2F30;
+
+  .name, .success {
+    margin-left: 10%;
+    margin-top: 20px;
+  }
+
+  .total-rows, .failed {
+    margin-left: 65%;
+    margin-top: -2%;
+  }
+
+  .file-name {
+    margin-left: 10%;
+  }
+  .success-count {
+    margin-left: 2%;
+  }
+
+  .total-rows-count, .failed-count {
+    margin-left: 6%;
+  }
+}
+
+.summary {
+  margin-bottom: 20px;
+}
+
+.success-status {
+  color: #008000;
+}
+
+.failed-status, .invalid-csv-file {
+  color: #FF0000;
+}

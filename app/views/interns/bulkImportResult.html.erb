@@ -1,23 +1,24 @@
 <div class=container>
+  <div class="heading">
+    <h2 class="text-center">Bulk Import Results</h2>
+  </div>
   <% if @interns[:invalid_attribute].empty? %>
     <% if @interns[:failed_rows] <1 %>
-      <div>Import on <%= @date%>: <%= "Successfully Imported" %></div>
+      <h2>Import on <%= @date%>: <span class="success-status"> <%= "Successfully Imported" %></span></h2>
     <% else %>
-      <h2>Import on <%= @date%>: <span class="status"> <%= "Failed" %></span></h2>
+      <h2>Import on <%= @date%>: <span class="failed-status"> <%= "Failed" %></span></h2>
       <div class=summary>
         <h1>Summary</h1>
-        <div class="name">File Name:  <%= @file_name%></div>
-        <div class="total-rows">Total No. of rows: <%= @interns[:total_rows]%></div>
-        <div class="success">No. of rows success:  <%= @interns[:success_rows]%></div>
-        <div class="failed">No. of rows failed: <%= @interns[:failed_rows]%></div>
+        <div class="name">File Name:  <span class="file-name"><%= @file_name%></span></div>
+        <div class="total-rows">Total No. of rows: <span class="total-rows-count"><%= @interns[:total_rows]%></span></div>
+        <div class="success">No. of rows success:  <span class="success-count"><%= @interns[:success_rows]%></span></div>
+        <div class="failed">No. of rows failed: <span class="failed-count"><%= @interns[:failed_rows]%></span></div>
       </div>
-      <br>
     <% end%>
     <% if @interns[:invalid_attribute].empty? && @interns[:failed_rows] > 0 %>
       <div class=details-errors>
         <h1>Error Details</h1>
         <% @interns[:interns_records].each do |intern|  %>
-
           <table class="table table-bordered">
           <div><%= "Row no:  #{intern[:row_number]}" %></div>
             <thead class="thead-light">
@@ -55,7 +56,7 @@
       </div>
     <% end %>
   <% else%>
-    <div>
+    <div class="invalid-csv-file">
       <h2> Invalid CSV File!! Please pass valid CSV file or follow the Instractions </h2>
     </div>
   <% end %>
