@@ -3,19 +3,21 @@
     <h2 class="text-center">Bulk Import Results</h2>
   </div>
   <% if @interns[:invalid_attribute].empty? %>
-    <% if @interns[:failed_rows] <1 %>
+    <% if @interns[:failed_rows_number] <1 %>
       <h2>Import on <%= @date%>: <span class="success-status"> <%= "Successfully Imported" %></span></h2>
     <% else %>
       <h2>Import on <%= @date%>: <span class="failed-status"> <%= "Failed" %></span></h2>
       <div class=summary>
         <h1>Summary</h1>
-        <div class="name">File Name:  <span class="file-name"><%= @file_name%></span></div>
+        <% if @file_name %>
+          <div class="name">File Name:  <span class="file-name"><%= @file_name%></span></div>
+        <% end %>
         <div class="total-rows">Total No. of rows: <span class="total-rows-count"><%= @interns[:total_rows]%></span></div>
-        <div class="success">No. of rows success:  <span class="success-count"><%= @interns[:success_rows]%></span></div>
-        <div class="failed">No. of rows failed: <span class="failed-count"><%= @interns[:failed_rows]%></span></div>
+        <div class="success">No. of rows success:  <span class="success-count"><%= @interns[:success_rows_number]%></span></div>
+        <div class="failed">No. of rows failed: <span class="failed-count"><%= @interns[:failed_rows_number]%></span></div>
       </div>
     <% end%>
-    <% if @interns[:invalid_attribute].empty? && @interns[:failed_rows] > 0 %>
+    <% if @interns[:invalid_attribute].empty? && @interns[:failed_rows_number] > 0 %>
       <div class=details-errors>
         <h1>Error Details</h1>
         <% @interns[:interns_records].each do |intern|  %>
@@ -33,13 +35,13 @@
               </tr>
             </thead>
             <tr>
-                <td><%= intern[:intern_details][0] %></td>
-                <td><%= intern[:intern_details][1] %></td>
-                <td><%= intern[:intern_details][2] %></td>
-                <td><%= intern[:intern_details][3] %></td>
-                <td><%= intern[:intern_details][4] %></td>
-                <td><%= intern[:intern_details][5] %></td>
-                <td><%= intern[:intern_details][6] %></td>
+                <td><%= intern[:intern_details]['emp_id'] %></td>
+                <td><%= intern[:intern_details]['display_name'] %></td>
+                <td><%= intern[:intern_details]['first_name'] %></td>
+                <td><%= intern[:intern_details]['last_name'] %></td>
+                <td><%= intern[:intern_details]['batch'] %></td>
+                <td><%= intern[:intern_details]['dob'] %></td>
+                <td><%= intern[:intern_details]['gender'] %></td>
             </tr>
           </table>
             <div>

@@ -16,6 +16,12 @@ class InternsController < ApplicationController
     render 'interns/bulkImportResult'
   end
 
+  def csv
+    @date = Date.today
+    @interns = Intern.csv(params[:csv_data][:data])
+    render 'interns/bulkImportResult'
+  end
+
   def show
     @intern = Intern.find(params[:id])
   end
@@ -76,4 +82,8 @@ private
   def filtering_params(params)
     params.slice(:emp_id, :display_name, :first_name, :last_name, :email, :batch, :dob, :phone_number, :gender,
                  :github_username, :slack_username, :dropbox_username)
+  end
+
+  def csv_params
+    params.require(:intern).permit(:csv_data)
   end

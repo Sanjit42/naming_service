@@ -1,0 +1,38 @@
+@import "variables";
+
+.heading {
+  margin-bottom: 50px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.instructions {
+  margin-left: 6%;
+  margin-top: -30px;
+
+  .instructions-details {
+    margin-left: 6%
+  }
+}
+
+.import-data, .import-csv {
+  position: relative;
+  width: 100%;
+  border: 1px solid;
+}
+
+.import-data {
+  height: 250px;
+}
+
+.import-csv {
+  height: 100px;
+}
+.text {
+  margin-left: 30px;
+  margin-top: 29px;
+}
+
+.submit {
+  margin-left: 30%;
+  margin-top: 34px;
+}

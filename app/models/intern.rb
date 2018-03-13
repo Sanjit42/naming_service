@@ -32,6 +32,8 @@ class Intern < ApplicationRecord
   scope :dropbox_username, -> (username) { joins(:dropbox).merge(Dropbox.username(username)) }
   scope :slack_username, -> (username) { joins(:slack).merge(Slack.username(username)) }
 
+  @allowed_attributes = ["emp_id", "display_name", "first_name", "last_name", "batch", "dob", "gender", "thoughtworks_email", "personal_email", "phone_number", "github_username", "slack_username", "dropbox_username"]
+
   def build_dependents
     build_github
     build_dropbox
@@ -47,58 +49,113 @@ class Intern < ApplicationRecord
   end
 
   def self.import(file)
-    allowed_attributes = ["emp_id", "display_name", "first_name", "last_name", "batch", "dob", "gender", "thoughtworks_email", "personal_email", "phone_number", "github_username", "slack_username", "dropbox_username"]
-    invalid_attribute = validate_csv_header file, allowed_attributes
+    invalid_attribute = validate_csv_header file, @allowed_attributes
     interns = {}
     interns[:invalid_attribute] = invalid_attribute
 
     if invalid_attribute.empty?
-      interns_records = []
+      invalid_data = []
       rows = 0
       CSV.foreach(file.path, headers: true) do |row|
-        thoughtworks_email = Email.create(category: 'ThoughtWorks', address: row['thoughtworks_email'])
-        personal_email = Email.create(category: 'Personal', address: row['personal_email'])
-        github = Github.create(username: row['github_username'])
-        slack = Slack.create(username: row['slack_username'])
-        dropbox = Dropbox.create(username: row['dropbox_username'])
-        imported_intern = Intern.new(
-            emp_id: row['emp_id'],
-            display_name: row['display_name'],
-            first_name: row['first_name'],
-            last_name: row['last_name'],
-            batch: row['batch'],
-            dob: row['dob'],
-            gender: row['gender'],
-            phone_number: row['phone_number'],
-            emails: [thoughtworks_email, personal_email],
-            github: github,
-            slack: slack,
-            dropbox: dropbox
-        )
+        imported_intern = validate_intern row
         rows += 1
         if !imported_intern.save
-          interns_records.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+          invalid_data.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
         end
       end
-      interns[:total_rows] = rows
-      interns[:failed_rows] = interns_records.count
-      interns[:success_rows] = rows - interns_records.count
-      interns[:interns_records] = interns_records
-      return interns
+      return result_formatter interns, invalid_data, rows
     else
       return interns
     end
   end
 
+  def self.csv (file)
+    invalid_data = []
+    interns = {}
+    rows = 0
+    text_area_data = file.split("\r")
+    headers = text_area_data.first(1)[0].split(",")
+
+    invalid_attribute = is_valid_header headers, @allowed_attributes
+    interns[:invalid_attribute] = invalid_attribute
+
+    data = text_area_data.drop(1)
+    interns_records = get_value_to_csv_format data, headers
+
+    if invalid_attribute.empty?
+      interns_records.each do |row|
+        imported_intern = validate_intern row
+        rows += 1
+        if !imported_intern.save
+          invalid_data.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+        end
+      end
+    end
+
+    return result_formatter interns, invalid_data, rows
+  end
+
   private
   def self.search_query
-    (searchable_fields.map { |field|
+    (searchable_fields.map {|field|
       "#{field} LIKE :search_term"
     }).join(' OR ')
   end
 
   def self.searchable_fields
     %w(emp_id display_name first_name last_name emails.address github_info.username slack_info.username dropbox_info.username )
+  end
+
+  def self.is_valid_header header, allowed_attributes
+    invalid_attribute = []
+    header.each do |attr|
+      if !allowed_attributes.include?(attr)
+        invalid_attribute.push(attr)
+      end
+    end
+    return invalid_attribute
+  end
+
+  def self.get_value_to_csv_format data, headers
+    interns_records = []
+    data.each do |row|
+      row_object = {}
+      row.split(",").each_with_index {|attr, index|
+        row_object[headers[index]] = attr}
+      interns_records.push(row_object)
+    end
+    return interns_records
+  end
+
+  def self.validate_intern row
+    thoughtworks_email = Email.create(category: 'ThoughtWorks', address: row ['thoughtworks_email'])
+    personal_email = Email.create(category: 'Personal', address: row['personal_email'])
+    github = Github.create(username: row['github_username'])
+    slack = Slack.create(username: row['slack_username'])
+    dropbox = Dropbox.create(username: row['dropbox_username'])
+    intern = Intern.new(
+        emp_id: row['emp_id'],
+        display_name: row['display_name'],
+        first_name: row['first_name'],
+        last_name: row['last_name'],
+        batch: row['batch'],
+        dob: row['dob'],
+        gender: row['gender'],
+        phone_number: row['phone_number'],
+        emails: [thoughtworks_email, personal_email],
+        github: github,
+        slack: slack,
+        dropbox: dropbox
+    )
+    return intern
+  end
+
+  def self.result_formatter interns, invalid_data, rows
+    interns[:total_rows] = rows
+    interns[:failed_rows_number] = invalid_data.count
+    interns[:success_rows_number] = rows - invalid_data.count
+    interns[:interns_records] = invalid_data
+    return interns
   end
 
   def self.validate_csv_header file, allowed_attributes
@@ -126,7 +183,7 @@ class Intern < ApplicationRecord
 
   def validate_gender
     if gender.blank? || gender.downcase == 'male' || gender.downcase == 'female' || gender.downcase == 'other'
-      else
+    else
       errors.add('Gender must be', 'Male, Female or Other')
     end
   end

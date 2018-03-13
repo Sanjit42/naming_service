@@ -1,19 +1,36 @@
 <div class="container">
+  <div class="heading">
+    <h2 class="text-center">Bulk Import</h2>
+  </div>
   <div class="instructions">
-    <h1>Instructions</h1>
-    <p>File must be CSV</p>
-    <p>First row must be headder</p>
-    <p>The followings fields must be there</p>
-    <p>Date of Birth format must be as follows</p>
-    <p>Gender must be one of the following</p>
-    <p></p>
+    <h1>Instructions:</h1>
+    <div class="instructions-details">
+      <p>File must be CSV</p>
+      <p>First row must be headder</p>
+      <p>The followings fields must be there</p>
+      <p>Date of Birth format must be as follows</p>
+      <p>Gender must be one of the following</p>
+    </div>
   </div>
 
-  <div>
+  <div class="import-csv">
     <%= form_tag import_interns_path, multipart: true do%>
-      <%= file_field_tag :file%>
-      <%= submit_tag "Import CSV"%>
+      <p class="submit">
+        <%= file_field_tag :file%>
+        <%= submit_tag "Import CSV"%>
+      <p>
     <% end%>
   </div>
 
+  <p class="text-center"> Or </p>
+  <div class="import-data">
+    <div class="text">
+      <%= form_tag :action => 'csv' do %>
+      <%= text_area :csv_data, :data, cols: 128, rows: 7,  placeholder:'Paste intern\'s CSV data'%>
+      <p class="text-center">
+        <%= submit_tag  "Import CSV Data" %>
+      </p>
+      <% end%>
+    </div>
+  </div>
 </div>
