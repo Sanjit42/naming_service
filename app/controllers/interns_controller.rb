@@ -1,4 +1,5 @@
 class InternsController < ApplicationController
+  before_action :must_login
 
   def index
     @interns = Intern.all

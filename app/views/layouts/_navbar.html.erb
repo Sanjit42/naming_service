@@ -2,18 +2,20 @@
   <a class="navbar-brand" href="#">Naming Service</a>
 
   <ul class="navbar-nav">
+    <% if logged_in? %>
+      <li class="nav-item">
+        <%= link_to 'All Interns', interns_path, html_options = {:class => 'nav-link'} %>
+      </li>
 
-    <li class="nav-item">
-      <%= link_to 'All Interns', interns_path, html_options = {:class => 'nav-link'} %>
-    </li>
+      <li class="nav-item">
+        <%= link_to 'New Intern', new_intern_path, html_options = {:class => 'nav-link'} %>
+      </li>
 
-    <li class="nav-item">
-      <%= link_to 'New Intern', new_intern_path, html_options = {:class => 'nav-link'} %>
-    </li>
+      <li class="nav-item">
+        <%= link_to 'Bulk Import', '/interns/bulkImport', html_options = {:class => 'nav-link'} %>
+      </li>
 
-    <li class="nav-item">
-      <%= link_to 'Bulk Import', '/interns/bulkImport', html_options = {:class => 'nav-link'} %>
-    </li>
-
+      <li><%= link_to 'Log out', logout_path, method: :delete %></li>
+    <% end%>
   </ul>
 </nav>

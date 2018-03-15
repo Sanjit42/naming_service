@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180216062815) do
+ActiveRecord::Schema.define(version: 20180314101935) do
 
   create_table "dropbox_info", force: :cascade do |t|
     t.integer "intern_id"
@@ -56,6 +56,14 @@ ActiveRecord::Schema.define(version: 20180216062815) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["intern_id"], name: "index_slack_info_on_intern_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password_digest"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

@@ -17,7 +17,7 @@
       <% end %>
     </div>
     <div class="action">
-      <%= link_to(@intern, method: :delete) do %>
+      <%= link_to(@intern, method: :delete, data: { confirm: 'Are you sure?' }) do %>
         <span class="fa fa-trash fa-lg"/>
       <% end %>
     </div>
