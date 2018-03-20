@@ -60,7 +60,7 @@ class Intern < ApplicationRecord
         imported_intern = validate_intern row
         rows += 1
         if !imported_intern.save
-          invalid_data.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+          invalid_data.push({row_number: rows, invalid_intern_details: row, errors: imported_intern.errors.full_messages})
         end
       end
       return result_formatter interns, invalid_data, rows
@@ -73,8 +73,8 @@ class Intern < ApplicationRecord
     invalid_data = []
     interns = {}
     rows = 0
-    text_area_data = file.split("\r")
-    headers = text_area_data.first(1)[0].split(",")
+    text_area_data = file.split("\r\n")
+    headers = text_area_data[0].split(",")
 
     invalid_attribute = is_valid_header headers, @allowed_attributes
     interns[:invalid_attribute] = invalid_attribute
@@ -87,7 +87,7 @@ class Intern < ApplicationRecord
         imported_intern = validate_intern row
         rows += 1
         if !imported_intern.save
-          invalid_data.push({row_number: rows, intern_details: row, errors: imported_intern.errors.full_messages})
+          invalid_data.push({row_number: rows, invalid_intern_details: row, errors: imported_intern.errors.full_messages})
         end
       end
     end

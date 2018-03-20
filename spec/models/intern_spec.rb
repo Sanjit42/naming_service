@@ -24,13 +24,12 @@ RSpec.describe Intern, type: :model do
   end
 
   describe 'validations' do
-    it 'should have emp_id, display_name, first_name, last_name, dob, batch, gender presence validation' do
+    it 'should have emp_id, display_name, first_name, dob, batch, gender presence validation' do
       intern = Intern.create
       intern.valid?
       expect(intern.errors[:emp_id]).to include("can't be blank")
       expect(intern.errors[:display_name]).to include("can't be blank")
       expect(intern.errors[:first_name]).to include("can't be blank")
-      expect(intern.errors[:last_name]).to include("can't be blank")
       expect(intern.errors[:dob]).to include("can't be blank")
       expect(intern.errors[:batch]).to include("can't be blank")
       expect(intern.errors[:gender]).to include("can't be blank")
@@ -256,7 +255,62 @@ RSpec.describe Intern, type: :model do
       expect(interns.size).to eq(1)
       expect(interns[0].dropbox.username).to eq('dropboxusername')
     end
+  end
 
 
+  describe 'csv' do
+    describe 'import file' do
+
+    end
+    describe 'text area data' do
+      describe 'header' do
+        it 'should return invalid header attributes when header attributes are invalid' do
+          csv_data = "emp_id,display_na,first_name,last_nam,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,Abhirup,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,9338117863,github42,slack42,dropbox42"
+          result = Intern.csv(csv_data)
+          expect(result[:invalid_attribute].size).to eq(2)
+          expect(result[:invalid_attribute]).to include("display_na")
+          expect(result[:invalid_attribute]).to include("last_nam")
+          expect(result[:invalid_attribute]).to_not include("first_name")
+          expect(result[:success_rows_number]).to eq(0)
+        end
+        it 'should not return any header attributes when all header attributes are valid' do
+          csv_data = "emp_id,display_name,first_name,last_name,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,Abhirup,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,9338117863,github42,slack42,dropbox42"
+
+          result = Intern.csv(csv_data)
+          expect(result[:invalid_attribute].size).to eq(0)
+          expect(result[:invalid_attribute]).to_not include("display_name")
+          expect(result[:invalid_attribute]).to_not include("last_name")
+          expect(result[:invalid_attribute]).to_not include("first_name")
+          expect(result[:success_rows_number]).to eq(1)
+        end
+      end
+      describe 'intern data' do
+        it 'should return errors message when attribute is empty' do
+          csv_data = "emp_id,display_name,first_name,last_name,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,9338117863,github42,slack42,dropbox42"
+          result = Intern.csv(csv_data)
+          expect(result[:failed_rows_number]).to eq(1)
+          expect(result[:success_rows_number]).to eq(0)
+          expect(result[:interns_records][0][:errors]).to include("First name can't be blank")
+          expect(result[:interns_records][0][:errors]).to_not include("Display name can't be blank")
+        end
+
+        it 'should return errors message when attribute is invalid' do
+          csv_data = "emp_id,display_name,first_name,last_name,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,test1,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,933817863,github42,slack42,dropbox42"
+          result = Intern.csv(csv_data)
+          expect(result[:failed_rows_number]).to eq(1)
+          expect(result[:success_rows_number]).to eq(0)
+          expect(result[:interns_records][0][:errors]).to include("Phone number is the wrong length (should be 10 characters)")
+        end
+
+        it 'should not return any error message when all data are valid' do
+          csv_data = "emp_id,display_name,first_name,last_name,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,Abhirup,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,9338117863,github42,slack42,dropbox42"
+          result = Intern.csv(csv_data)
+          expect(result[:total_rows]).to eq(1)
+          expect(result[:failed_rows_number]).to eq(0)
+          expect(result[:success_rows_number]).to eq(1)
+          expect(result[:interns_records].size).to eq(0)
+        end
+      end
+    end
   end
 end

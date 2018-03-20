@@ -2,6 +2,10 @@ require 'rails_helper'
 
 RSpec.describe InternsController, type: :controller do
 
+  before :each do
+    allow(controller).to receive(:logged_in?).and_return(true)
+  end
+
   describe 'GET index' do
     it 'should render index template' do
       get :index
@@ -159,4 +163,22 @@ RSpec.describe InternsController, type: :controller do
     end
   end
 
+  describe 'CSV' do
+    describe 'Import CSV' do
+      before :each do
+        @file = fixture_file_upload('files/data.csv', 'text/csv')
+      end
+      it 'should import file' do
+        post :import, params: {file: @file}
+        response.should be_success
+      end
+    end
+    describe 'Text area data' do
+      it 'should take csv data' do
+        data = "emp_id,display_name,first_name,last_name,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,9338117863,github42,slack42,dropbox42"
+        post :csv, params: {csv_data: {data: data}}
+        response.should be_success
+      end
+    end
+  end
 end
