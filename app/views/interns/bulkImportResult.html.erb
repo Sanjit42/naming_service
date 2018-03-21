@@ -12,9 +12,9 @@
         <% if @file_name %>
           <div class="name">File Name:  <span class="file-name"><%= @file_name%></span></div>
         <% end %>
-        <div class="total-rows">Total No. of rows: <span class="total-rows-count"><%= @interns[:total_rows]%></span></div>
-        <div class="success">No. of rows success:  <span class="success-count"><%= @interns[:success_rows_number]%></span></div>
-        <div class="failed">No. of rows failed: <span class="failed-count"><%= @interns[:failed_rows_number]%></span></div>
+        <div class="total-rows">Total rows: <span class="total-rows-count"><%= @interns[:total_rows]%></span></div>
+        <div class="success">Success row(s):  <span class="success-count"><%= @interns[:success_rows_number]%></span></div>
+        <div class="failed">Failed row(s): <span class="failed-count"><%= @interns[:failed_rows_number]%></span></div>
       </div>
     <% end%>
     <% if @interns[:invalid_attribute].empty? && @interns[:failed_rows_number] > 0 %>
@@ -32,6 +32,8 @@
                 <th>Batch</th>
                 <th>Dob</th>
                 <th>Gender</th>
+                <th>Thoughtworkes Email</th>
+                <th>Personal Email</th>
               </tr>
             </thead>
             <tr>
@@ -42,6 +44,8 @@
                 <td><%= intern[:invalid_intern_details]['batch'] %></td>
                 <td><%= intern[:invalid_intern_details]['dob'] %></td>
                 <td><%= intern[:invalid_intern_details]['gender'] %></td>
+                <td><%= intern[:invalid_intern_details]['thoughtworks_email'] %></td>
+                <td><%= intern[:invalid_intern_details]['personal_email'] %></td>
             </tr>
           </table>
             <div>

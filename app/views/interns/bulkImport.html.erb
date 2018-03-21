@@ -5,18 +5,38 @@
   <div class="instructions">
     <h1>Instructions:</h1>
     <div class="instructions-details">
-      <p>File must be CSV</p>
-      <p>First row must be headder</p>
-      <p>The followings fields must be there</p>
-      <p>Date of Birth format must be as follows</p>
-      <p>Gender must be one of the following</p>
+      <li>File must be CSV</li>
+      <li>First row must be headder</li>
+      <div class="example-header">
+        <p class="example-container">emp_id, display_name, first_name, last_name, batch, dob, gender, thoughtworks_email, personal_email, phone_number, github_username, slack_username, dropbox_username</p>
+      </div>
+      <li>The followings fields must be there</li>
+      <div class="mandatory-headers">
+        <p class="example-container">emp_id, display_name, first_name, batch, dob, gender</p>
+      </div>
+      <li>Date of Birth format must be as follows</li>
+      <div class="example">
+        Example:- dd/mm/yyyy
+      </div>
+      <li>Gender must be one of the following</li>
+      <div class="example">
+        male, female, others
+      </div>
+      <li>Give empty coma (,) for fields you don't want to give data</li>
+      Example:-
+      <div class="csv-example">
+        <p class="example-container">emp_id, display_name, first_name, last_name, batch, dob, gender, thoughtworks_email, personal_email, phone_number, github_username, slack_username, dropbox_username</p>
+        <p class="example-container">17862, Amit, Amit, Roy, 2, 10-03-1994, male, admin@thoughtworks.com, admin@gmail.com, 9933427863, github42, slack42, dropbox42</p>
+      </div>
     </div>
   </div>
 
   <div class="import-csv">
+    <% flash.now[:danger] %>
+
     <%= form_tag import_interns_path, multipart: true do%>
       <p class="submit">
-        <%= file_field_tag :file%>
+        <%= file_field_tag :file, accept: 'text/csv', required: true%>
         <%= submit_tag "Import CSV"%>
       <p>
     <% end%>
@@ -26,7 +46,7 @@
   <div class="import-data">
     <div class="text">
       <%= form_tag :action => 'csv' do %>
-      <%= text_area :csv_data, :data, cols: 128, rows: 7,  placeholder:'Paste intern\'s CSV data'%>
+      <%= text_area :csv_data, :data, cols: 128, rows: 7,  placeholder:'Paste intern\'s CSV data', required: true%>
       <p class="text-center">
         <%= submit_tag  "Import CSV Data" %>
       </p>

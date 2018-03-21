@@ -15,7 +15,7 @@
         <%= link_to 'Bulk Import', '/interns/bulkImport', html_options = {:class => 'nav-link'} %>
       </li>
 
-      <li><%= link_to 'Log out', logout_path, method: :delete %></li>
+      <li class="nav-item logout"><%= link_to 'Logout', logout_path, html_options = {:class => 'nav-link', method: :delete } %></li>
     <% end%>
   </ul>
 </nav>

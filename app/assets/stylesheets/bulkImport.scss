@@ -24,8 +24,34 @@
   height: 250px;
 }
 
+.example-header, .csv-example, .mandatory-headers {
+  position: relative;
+  width: 66%;
+  border: 1px solid;
+  margin-left: 20px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+.example-header {
+  height: 56px;
+}
+
+.csv-example {
+  height: 115px;
+}
+
+.mandatory-headers {
+  height: 30px;
+}
+
+.example {
+  margin-left: 22px;
+}
+
 .import-csv {
   height: 100px;
+  margin-top: 28px;
 }
 .text {
   margin-left: 30px;
@@ -35,4 +61,7 @@
 .submit {
   margin-left: 30%;
   margin-top: 34px;
+}
+.example-container {
+  margin-left: 6px;
 }

@@ -11,16 +11,16 @@ class InternsController < ApplicationController
   end
 
   def import
-    @date = Date.today
-    @file_name = params[:file].original_filename
-    @interns = Intern.import(params[:file])
-    render 'interns/bulkImportResult'
+      @date = Date.today
+      @file_name = params[:file].original_filename
+      @interns = Intern.import(params[:file])
+      render 'interns/bulkImportResult'
   end
 
   def csv
-    @date = Date.today
-    @interns = Intern.csv(params[:csv_data][:data])
-    render 'interns/bulkImportResult'
+      @date = Date.today
+      @interns = Intern.csv(params[:csv_data][:data])
+      render 'interns/bulkImportResult'
   end
 
   def show
@@ -69,7 +69,6 @@ class InternsController < ApplicationController
 
   end
 end
-
 
 private
 
