@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
       redirect_to root_path
     else
       flash.now[:danger] = "Your email or password does not match"
-      render sessions_new_path
+      render 'new'
     end
   end
 
