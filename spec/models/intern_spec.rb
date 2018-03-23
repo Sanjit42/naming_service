@@ -89,6 +89,44 @@ RSpec.describe Intern, type: :model do
       expect(intern.errors['Date of birth']).to include('must be past')
     end
 
+    describe 'first name' do
+      it 'should contain only character' do
+        intern = Intern.create(:first_name => 'jon')
+        intern.valid?
+        expect(intern.errors[:first_name]).to be_empty
+      end
+
+      it 'should not contain number' do
+        intern = Intern.create(:first_name => 'jon1')
+        intern.valid?
+        expect(intern.errors[:first_name]).to include(" must be character, not special char or number")
+      end
+
+      it 'should not contain special character' do
+        intern = Intern.create(:first_name => 'jon@')
+        intern.valid?
+        expect(intern.errors[:first_name]).to include(" must be character, not special char or number")
+      end
+    end
+    describe 'last name' do
+      it 'should contain only character' do
+        intern = Intern.create(:last_name => 'jon')
+        intern.valid?
+        expect(intern.errors[:last_name]).to be_empty
+      end
+
+      it 'name not contain number' do
+        intern = Intern.create(:last_name => 'jon1')
+        intern.valid?
+        expect(intern.errors[:last_name]).to include(" must be character, not special char or number")
+      end
+
+      it 'should not contain special character' do
+        intern = Intern.create(:last_name => 'jon@')
+        intern.valid?
+        expect(intern.errors[:last_name]).to include(" must be character, not special char or number")
+      end
+    end
   end
 
   describe 'search' do

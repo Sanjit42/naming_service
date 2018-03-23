@@ -18,6 +18,8 @@ class Intern < ApplicationRecord
   validates :gender, inclusion: { in: %w(male female others) }
   validate :validate_dob
   validate :validate_gender
+  validates :first_name, format: { with: /\A^[a-zA-Z\s]*$+/, message:" must be character, not special char or number"}
+  validates :last_name, format: { with: /\A^[a-zA-Z\s]*$+/, message:" must be character, not special char or number"}
 
   scope :emp_id, -> (emp_id) { where emp_id: emp_id }
   scope :display_name, -> (display_name) { where display_name: display_name }
