@@ -57,6 +57,13 @@ RSpec.describe Intern, type: :model do
       expect(intern.errors[:phone_number]).to include('is the wrong length (should be 10 characters)')
     end
 
+    it 'phone_number should accept only numbers' do
+      intern = Intern.create(:phone_number => '-902123456')
+      intern.valid?
+      intern.errors.should have_key(:emp_id)
+      expect(intern.errors[:phone_number]).to include(' must be numbers')
+    end
+
     it 'should allow male as gender' do
       intern = Intern.create(:gender => 'male')
       intern.valid?
@@ -108,6 +115,7 @@ RSpec.describe Intern, type: :model do
         expect(intern.errors[:first_name]).to include(" must be character, not special char or number")
       end
     end
+
     describe 'last name' do
       it 'should contain only character' do
         intern = Intern.create(:last_name => 'jon')

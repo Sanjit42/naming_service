@@ -13,6 +13,7 @@ class Intern < ApplicationRecord
 
   validates :emp_id, :display_name, :first_name, :dob, :batch, :gender, presence: true
   validates :phone_number, numericality: true, length: { is: 10 }, if: :phone_number_present?
+  validates :phone_number, format: {with: /\A^[0-9\s]*$+/, message: " must be numbers"}
   validates :emp_id, numericality: true, length: { maximum: 10 }, if: :emp_id_present?
   validates :batch, numericality: true, if: :batch_present?
   validates :gender, inclusion: { in: %w(male female others) }
@@ -162,16 +163,11 @@ class Intern < ApplicationRecord
 
   def self.validate_csv_header file, allowed_attributes
     invalid_attribute = []
-    attributes_passed_by_csv = []
-    CSV.foreach(file.path, headers: true) do |row|
-      row.to_hash.select do |k, v|
-        attributes_passed_by_csv.push(k)
-      end
+    headers = CSV.open(file.path, 'r') {|csv| csv.first}
 
-      attributes_passed_by_csv.each do |attr|
-        if !allowed_attributes.include?(attr)
-          invalid_attribute.push(attr)
-        end
+    headers.each do |attr|
+      if !allowed_attributes.include?(attr)
+        invalid_attribute.push(attr)
       end
     end
     return invalid_attribute
