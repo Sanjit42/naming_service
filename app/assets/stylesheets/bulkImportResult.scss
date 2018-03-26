@@ -21,13 +21,17 @@
   }
 
   .file-name {
-    margin-left: 10%;
+    margin-left: 6%;
   }
   .success-count {
     margin-left: 2%;
   }
 
-  .total-rows-count, .failed-count {
+  .total-rows-count {
+    margin-left: 11%;
+  }
+
+  .failed-count {
     margin-left: 6%;
   }
 }

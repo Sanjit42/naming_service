@@ -52,8 +52,9 @@ class Intern < ApplicationRecord
   end
 
   def self.import(file)
-    invalid_attribute = validate_csv_header file, @allowed_attributes
     interns = {}
+    headers = CSV.open(file.path, 'r') {|csv| csv.first}
+    invalid_attribute = is_valid_header headers, @allowed_attributes
     interns[:invalid_attribute] = invalid_attribute
 
     if invalid_attribute.empty?
@@ -109,9 +110,9 @@ class Intern < ApplicationRecord
     %w(emp_id display_name first_name last_name emails.address github_info.username slack_info.username dropbox_info.username )
   end
 
-  def self.is_valid_header header, allowed_attributes
+  def self.is_valid_header headers, allowed_attributes
     invalid_attribute = []
-    header.each do |attr|
+    headers.each do |attr|
       if !allowed_attributes.include?(attr)
         invalid_attribute.push(attr)
       end
@@ -159,18 +160,6 @@ class Intern < ApplicationRecord
     interns[:success_rows_number] = rows - invalid_data.count
     interns[:interns_records] = invalid_data
     return interns
-  end
-
-  def self.validate_csv_header file, allowed_attributes
-    invalid_attribute = []
-    headers = CSV.open(file.path, 'r') {|csv| csv.first}
-
-    headers.each do |attr|
-      if !allowed_attributes.include?(attr)
-        invalid_attribute.push(attr)
-      end
-    end
-    return invalid_attribute
   end
 
   def validate_dob
