@@ -2,7 +2,7 @@
   <div class="heading">
     <h2 class="text-center">Bulk Import Results</h2>
   </div>
-  <% if @interns[:invalid_attribute].empty? %>
+  <% if @interns[:invalid_header].empty? %>
     <% if @interns[:failed_rows_number] <1 %>
       <h2>Import on <%= @date%>: <span class="success-status"> <%= "Successfully Imported" %></span></h2>
     <% else %>
@@ -17,7 +17,7 @@
         <div class="failed">Failed row(s): <span class="failed-count"><%= @interns[:failed_rows_number]%></span></div>
       </div>
     <% end%>
-    <% if @interns[:invalid_attribute].empty? && @interns[:failed_rows_number] > 0 %>
+    <% if @interns[:invalid_header].empty? && @interns[:failed_rows_number] > 0 %>
       <div class=details-errors>
         <h1>Error Details</h1>
         <% @interns[:interns_records].each do |intern|  %>

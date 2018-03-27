@@ -43,6 +43,7 @@ class InternsController < ApplicationController
 
   def create
     @intern = Intern.new(intern_params)
+    @intern[:present_in_TW] = true
     if @intern.save
       redirect_to intern_path(@intern)
     else
@@ -53,8 +54,21 @@ class InternsController < ApplicationController
   def destroy
     @intern = Intern.find(params[:id])
     @intern.destroy
-
     redirect_to interns_path
+  end
+
+  def not_in_TW
+    @intern = Intern.find(params[:id])
+    @intern[:present_in_TW] = false
+    @intern.save
+    redirect_to intern_path
+  end
+
+  def present_in_TW
+    @intern = Intern.find(params[:id])
+    @intern[:present_in_TW] = true
+    @intern.save
+    redirect_to intern_path
   end
 
   def search

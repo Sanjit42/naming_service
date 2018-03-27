@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   resources :interns do
     get 'search', :on => :collection
     collection {post :import}
+    member do
+      post 'not_in_TW', 'present_in_TW'
+    end
   end
   root 'interns#index'
 

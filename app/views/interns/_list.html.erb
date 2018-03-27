@@ -1,6 +1,7 @@
 <div class="interns">
   <table>
     <tr>
+      <th>Present in TW</th>
       <th>Emp ID</th>
       <th>Name</th>
       <th>Gender</th>
@@ -13,6 +14,11 @@
 
     <% @interns.each do |intern| %>
       <tr>
+        <%if !intern.present_in_TW== false%>
+          <td><span class="fas fa-check"/></td>
+        <% else %>
+          <td><span class="fa fa-ban"/></td>
+        <% end %>
         <td><%= intern.emp_id %></td>
         <td class="name">
           <div class="display_name"><%= intern.display_name %></div>

@@ -5,6 +5,11 @@
   <div class="display-name">
     <%= @intern.display_name %>
   </div>
+  <% if !@intern[:present_in_TW]%>
+    <div class="not-present-in-TW">
+      <span class="fa fa-ban fa-lg"/>
+    </div>
+  <% end %>
   <div class="full-name">
     <span> <%= @intern.first_name %> </span>
     <span> <%= @intern.last_name %> </span>
@@ -23,8 +28,14 @@
     </div>
 
     <div class="action">
-      <%= link_to() do %>
-        <span class="fa fa-ban fa-lg"/>
+      <% if @intern[:present_in_TW]%>
+        <%= link_to  not_in_TW_intern_path, method: :post do %>
+          <span class="fa fa-ban fa-lg"/>
+        <% end %>
+      <% else %>
+        <%= link_to  present_in_TW_intern_path, method: :post do %>
+          <span class="fas fa-undo-alt"/>
+        <% end %>
       <% end %>
     </div>
   </div>

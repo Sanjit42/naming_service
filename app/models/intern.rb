@@ -19,8 +19,8 @@ class Intern < ApplicationRecord
   validates :gender, inclusion: { in: %w(male female others) }
   validate :validate_dob
   validate :validate_gender
-  validates :first_name, format: { with: /\A^[a-zA-Z\s]*$+/, message:" must be character, not special char or number"}
-  validates :last_name, format: { with: /\A^[a-zA-Z\s]*$+/, message:" must be character, not special char or number"}
+  validates :first_name, format: {with: /\A^[a-zA-Z\s]*$+/, message: " must be character, not special char or number"}
+  validates :last_name, format: {with: /\A^[a-zA-Z\s]*$+/, message: " must be character, not special char or number"}
 
   scope :emp_id, -> (emp_id) { where emp_id: emp_id }
   scope :display_name, -> (display_name) { where display_name: display_name }
@@ -42,7 +42,7 @@ class Intern < ApplicationRecord
     build_dropbox
     build_slack
 
-    ['ThoughtWorks', 'Personal'].each { |category|
+    ['ThoughtWorks', 'Personal'].each {|category|
       self.emails.build({category: category})
     }
   end
@@ -54,18 +54,15 @@ class Intern < ApplicationRecord
   def self.import(file)
     interns = {}
     headers = CSV.open(file.path, 'r') {|csv| csv.first}
-    invalid_attribute = is_valid_header headers, @allowed_attributes
-    interns[:invalid_attribute] = invalid_attribute
+    invalid_header = is_valid_header headers, @allowed_attributes
+    interns[:invalid_header] = invalid_header
 
-    if invalid_attribute.empty?
+    if invalid_header.empty?
       invalid_data = []
       rows = 0
       CSV.foreach(file.path, headers: true) do |row|
-        imported_intern = validate_intern row
-        rows += 1
-        if !imported_intern.save
-          invalid_data.push({row_number: rows, invalid_intern_details: row, errors: imported_intern.errors.full_messages})
-        end
+        rows +=1
+        invalid_data = get_invalid_data invalid_data, row, rows
       end
       return result_formatter interns, invalid_data, rows
     else
@@ -74,25 +71,22 @@ class Intern < ApplicationRecord
   end
 
   def self.csv (file)
-    invalid_data = []
     interns = {}
-    rows = 0
     text_area_data = file.split("\r\n")
     headers = text_area_data[0].split(",")
 
-    invalid_attribute = is_valid_header headers, @allowed_attributes
-    interns[:invalid_attribute] = invalid_attribute
+    invalid_header = is_valid_header headers, @allowed_attributes
+    interns[:invalid_header] = invalid_header
 
     data = text_area_data.drop(1)
     interns_records = get_value_to_csv_format data, headers
 
-    if invalid_attribute.empty?
+    if invalid_header.empty?
+      invalid_data = []
+      rows = 0
       interns_records.each do |row|
-        imported_intern = validate_intern row
-        rows += 1
-        if !imported_intern.save
-          invalid_data.push({row_number: rows, invalid_intern_details: row, errors: imported_intern.errors.full_messages})
-        end
+        rows +=1
+        invalid_data = get_invalid_data invalid_data, row, rows
       end
     end
 
@@ -100,6 +94,20 @@ class Intern < ApplicationRecord
   end
 
   private
+  def self.get_invalid_data invalid_data, row, rows
+    invalid_data = invalid_data || []
+    intern = validate_intern row
+    intern[:present_in_TW] = true
+    if !intern.save
+      invalid_data.push({
+        row_number: rows,
+        invalid_intern_details: row,
+        errors: intern.errors.full_messages
+      })
+    end
+    return invalid_data
+  end
+
   def self.search_query
     (searchable_fields.map {|field|
       "#{field} LIKE :search_term"
@@ -111,13 +119,13 @@ class Intern < ApplicationRecord
   end
 
   def self.is_valid_header headers, allowed_attributes
-    invalid_attribute = []
+    invalid_header = []
     headers.each do |attr|
       if !allowed_attributes.include?(attr)
-        invalid_attribute.push(attr)
+        invalid_header.push(attr)
       end
     end
-    return invalid_attribute
+    return invalid_header
   end
 
   def self.get_value_to_csv_format data, headers
