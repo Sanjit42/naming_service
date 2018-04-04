@@ -61,7 +61,7 @@ class Intern < ApplicationRecord
       invalid_data = []
       rows = 0
       CSV.foreach(file.path, headers: true) do |row|
-        rows +=1
+        rows += 1
         invalid_data = get_invalid_data invalid_data, row, rows
       end
       return result_formatter interns, invalid_data, rows
@@ -78,19 +78,20 @@ class Intern < ApplicationRecord
     invalid_header = is_valid_header headers, @allowed_attributes
     interns[:invalid_header] = invalid_header
 
-    data = text_area_data.drop(1)
-    interns_records = get_value_to_csv_format data, headers
-
     if invalid_header.empty?
+      data = text_area_data.drop(1)
+      interns_records = get_value_to_csv_format data, headers
+
       invalid_data = []
       rows = 0
       interns_records.each do |row|
-        rows +=1
+        rows += 1
         invalid_data = get_invalid_data invalid_data, row, rows
       end
+      return result_formatter interns, invalid_data, rows
+    else
+      return interns
     end
-
-    return result_formatter interns, invalid_data, rows
   end
 
   private

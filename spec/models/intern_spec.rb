@@ -141,9 +141,9 @@ RSpec.describe Intern, type: :model do
 
     before(:each) do
       Intern.create({:emp_id => '112233', :display_name => 'Display Name', :first_name => 'First Name', :last_name => 'Last Name',
-                    :phone_number => '9000000000', :dob => '12-10-10', :gender => 'male', :batch => '3',
-                    :github_attributes => {:username => 'gitusername'}, :slack_attributes => {:username => 'slackusername'},
-                    :dropbox_attributes => {:username => 'dropboxusername'}, :emails_attributes => [{:category => 'TW', :address => 'email@tw.com'}]})
+                     :phone_number => '9000000000', :dob => '12-10-10', :gender => 'male', :batch => '3',
+                     :github_attributes => {:username => 'gitusername'}, :slack_attributes => {:username => 'slackusername'},
+                     :dropbox_attributes => {:username => 'dropboxusername'}, :emails_attributes => [{:category => 'TW', :address => 'email@tw.com'}]})
     end
 
     it 'should search by emp id' do
@@ -304,29 +304,79 @@ RSpec.describe Intern, type: :model do
   end
 
 
-  describe 'csv' do
+  describe 'CSV' do
     describe 'import file' do
+      before :each do
+        @file = fixture_file_upload('files/data.csv', 'text/csv')
+      end
+      describe 'header' do
+        before :each do
+          @invalid_header_file = fixture_file_upload('files/test_data.csv', 'text/csv')
+        end
+        describe 'invalid' do
+          it 'should return invalid headers' do
+            result = Intern.import(@invalid_header_file)
+            expect(result[:invalid_header].size).to eq(2)
+            expect(result[:invalid_header]).to include("dislay_name")
+            expect(result[:invalid_header]).to include("lat_name")
+            expect(result[:invalid_header]).to_not include("first_name")
+            expect(result).to_not include("success_rows_number")
+          end
+        end
+        describe 'valid' do
+          it 'should not return any header' do
+            result = Intern.import(@file)
+            expect(result[:invalid_header].size).to eq(0)
+            expect(result[:invalid_header]).to_not include("display_name")
+            expect(result[:invalid_header]).to_not include("last_name")
+            expect(result[:invalid_header]).to_not include("first_name")
+            expect(result[:success_rows_number]).to eq(1)
+          end
+        end
+      end
+      describe 'intern data' do
+        it 'should return errors message when attribute is empty or invalid' do
+          result = Intern.import(@file)
+          expect(result[:total_rows]).to eq(2)
+          expect(result[:failed_rows_number]).to eq(1)
+          expect(result[:success_rows_number]).to eq(1)
+          expect(result[:interns_records][0][:errors]).to include("First name can't be blank")
+          expect(result[:interns_records][0][:errors]).to include("Gender must be Male, Female or Other")
+          expect(result[:interns_records][0][:errors]).to_not include("Display name can't be blank")
+        end
+      end
 
+      describe 'intern data' do
+        before :each do
+          @file = fixture_file_upload('files/valid_data.csv', 'text/csv')
+        end
+        it 'should not return any error message when all data are valid' do
+          result = Intern.import(@file)
+          expect(result[:total_rows]).to eq(1)
+          expect(result[:failed_rows_number]).to eq(0)
+          expect(result[:success_rows_number]).to eq(1)
+          expect(result[:interns_records].size).to eq(0)
+        end
+      end
     end
     describe 'text area data' do
       describe 'header' do
         it 'should return invalid header attributes when header attributes are invalid' do
           csv_data = "emp_id,display_na,first_name,last_nam,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,Abhirup,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,9338117863,github42,slack42,dropbox42"
           result = Intern.csv(csv_data)
-          expect(result[:invalid_attribute].size).to eq(2)
-          expect(result[:invalid_attribute]).to include("display_na")
-          expect(result[:invalid_attribute]).to include("last_nam")
-          expect(result[:invalid_attribute]).to_not include("first_name")
-          expect(result[:success_rows_number]).to eq(0)
+          expect(result[:invalid_header].size).to eq(2)
+          expect(result[:invalid_header]).to include("display_na")
+          expect(result[:invalid_header]).to include("last_nam")
+          expect(result[:invalid_header]).to_not include("first_name")
         end
         it 'should not return any header attributes when all header attributes are valid' do
           csv_data = "emp_id,display_name,first_name,last_name,batch,dob,gender,thoughtworks_email,personal_email,phone_number,github_username,slack_username,dropbox_username\r\n11,test,Abhirup,,2,10-03-2001,male,sanjitd@thoughtworks.com,sanjit@gmail.com,9338117863,github42,slack42,dropbox42"
 
           result = Intern.csv(csv_data)
-          expect(result[:invalid_attribute].size).to eq(0)
-          expect(result[:invalid_attribute]).to_not include("display_name")
-          expect(result[:invalid_attribute]).to_not include("last_name")
-          expect(result[:invalid_attribute]).to_not include("first_name")
+          expect(result[:invalid_header].size).to eq(0)
+          expect(result[:invalid_header]).to_not include("display_name")
+          expect(result[:invalid_header]).to_not include("last_name")
+          expect(result[:invalid_header]).to_not include("first_name")
           expect(result[:success_rows_number]).to eq(1)
         end
       end
