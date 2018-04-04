@@ -15,6 +15,14 @@
         <%= link_to 'Bulk Import', '/interns/bulkImport', html_options = {:class => 'nav-link'} %>
       </li>
 
+      <li class="nav-item">
+        <%= link_to 'All Batches', batches_path, html_options = {:class => 'nav-link'} %>
+      </li>
+
+      <li class="nav-item">
+        <%= link_to 'Create Batch', new_batch_path, html_options = {:class => 'nav-link'} %>
+      </li>
+
       <li class="nav-item logout"><%= link_to 'Logout', logout_path, html_options = {:class => 'nav-link', method: :delete } %></li>
     <% end%>
   </ul>

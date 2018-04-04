@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="heading">
+    <h2 class="text-center"> All Batches</h2>
+  </div>
+
+  <div class="interns">
+    <table>
+      <tr>
+        <th>Batch name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Action</th>
+      </tr>
+
+      <% @batches.each do |batch| %>
+      <tr>
+        <td><%= batch.batch_name %></td>
+        <td><%= batch.start_date %></td>
+        <td><%= batch.end_date %></td>
+        <td>
+          <%= link_to(batch) do %>
+            <span class="fa fa-eye"/>
+          <% end %>
+
+          <%= link_to(edit_batch_path(batch)) do %>
+            <span class="fa fa-edit"/>
+          <% end %>
+
+          <%= link_to(batch, method: :delete, data: { confirm: 'Are you sure?' }) do %>
+            <span class="fa fa-trash"/>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    <table>
+</div>

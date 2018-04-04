@@ -1,0 +1,12 @@
+<div class="container">
+  <div class="heading">
+    <h2 class="text-center">
+      Edit <span class="intern-name"><%= @batch.batch_name %></span> 's Profile
+    </h2>
+    <%= link_to(batches_path(@batch), html_options = {}) do %>
+      <span class="fa fa-arrow-left"></span>
+      <%= @batch.batch_name %>
+    <% end %>
+  </div>
+  <%=	render 'form' %>
+</div>

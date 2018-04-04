@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe SessionsController, type: :controller do
   describe "Login" do
     before do
-      @article = FactoryBot.create(:user)
+      FactoryBot.create(:user)
     end
     it 'should login when username and password are correct' do
       post :create, params: FactoryBot.attributes_for(:user)

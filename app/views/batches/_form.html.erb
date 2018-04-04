@@ -1,0 +1,23 @@
+<div class="intern-form">
+  <%= form_with model: @batch, local: true do |form| %>
+  <div class="attributes">
+    <div class="attribute">
+      <div class="field"> Batch Name <span class="required"> * </span> </div>
+      <div class="value"> <%= form.text_field :batch_name, placeholder: 'Batch Name' %> </div>
+    </div>
+
+    <div class="attribute">
+      <div class="field"> Start Date <span class="required"> * </span> </div>
+      <div class="value"> <%= form.date_field :start_date, max: Date.today %> </div>
+    </div>
+
+    <div class="attribute">
+      <div class="field"> End Date <span class="required"> * </span> </div>
+      <div class="value"> <%= form.date_field :end_date %> </div>
+    </div>
+  </div>
+
+  <p class="text-right">
+    <%= form.submit %>
+  </p>
+<%end%>

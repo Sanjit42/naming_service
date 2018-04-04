@@ -3,10 +3,6 @@ Rails.application.routes.draw do
   delete 'logout', to: 'sessions#destroy'
   post 'login', to: 'sessions#create'
 
-  get 'interns/bulkImport'
-  post 'interns/csv'
-  get '', to: redirect('/interns')
-
   resources :interns do
     get 'search', :on => :collection
     collection {post :import}
@@ -14,6 +10,11 @@ Rails.application.routes.draw do
       post 'not_in_TW', 'present_in_TW'
     end
   end
+  get 'interns/bulkImport'
+  post 'interns/csv'
+  get '', to: redirect('/interns')
   root 'interns#index'
 
+  resources :batches
+  root 'batches#index'
 end
