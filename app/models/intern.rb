@@ -1,6 +1,8 @@
 class Intern < ApplicationRecord
   require 'csv'
 
+  before_save :default_values
+
   has_many :emails, dependent: :delete_all
   has_one :github, dependent: :destroy
   has_one :slack, dependent: :destroy
@@ -95,6 +97,11 @@ class Intern < ApplicationRecord
   end
 
   private
+
+  def default_values
+    self.present_in_TW = self.present_in_TW != nil ? self.present_in_TW : true
+  end
+
   def self.get_invalid_data invalid_data, row, rows
     invalid_data = invalid_data || []
     intern = validate_intern row

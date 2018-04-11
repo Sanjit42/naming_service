@@ -92,33 +92,33 @@ RSpec.describe InternsController, type: :controller do
     end
   end
 
-  # describe 'POST create' do
-  #   it 'should redirect to the all interns page after creation of an intern' do
-  #     intern = double('Intern', id: 'id')
-  #     intern_attributes = {display_name: 'Intern 1'}
-  #
-  #     allow_any_instance_of(InternsController).to receive(:intern_params).and_return(intern_attributes)
-  #     expect(Intern).to receive(:new).with(intern_attributes).and_return(intern)
-  #     expect(intern).to receive(:save).and_return(true)
-  #
-  #     post :create, params: {id: 'id', display_name: 'Intern 1'}
-  #
-  #     expect(response).to redirect_to(intern_path(intern))
-  #   end
-  #
-  #   it 'should render new when intern is not saved properly' do
-  #     intern = double('Intern', id: 'id')
-  #     intern_attributes = {display_name: 'Intern 1'}
-  #
-  #     allow_any_instance_of(InternsController).to receive(:intern_params).and_return(intern_attributes)
-  #     expect(Intern).to receive(:new).with(intern_attributes).and_return(intern)
-  #     expect(intern).to receive(:save).and_return(false)
-  #
-  #     post :create, params: {id: 'id', display_name: 'Intern 1'}
-  #
-  #     expect(response).to render_template('interns/new')
-  #   end
-  # end
+  describe 'POST create' do
+    it 'should redirect to the all interns page after creation of an intern' do
+      intern = double('Intern', id: 'id')
+      intern_attributes = {display_name: 'Intern 1'}
+
+      allow_any_instance_of(InternsController).to receive(:intern_params).and_return(intern_attributes)
+      expect(Intern).to receive(:new).with(intern_attributes).and_return(intern)
+      expect(intern).to receive(:save).and_return(true)
+
+      post :create, params: {id: 'id', display_name: 'Intern 1'}
+
+      expect(response).to redirect_to(intern_path(intern))
+    end
+
+    it 'should render new when intern is not saved properly' do
+      intern = double('Intern', id: 'id')
+      intern_attributes = {display_name: 'Intern 1'}
+
+      allow_any_instance_of(InternsController).to receive(:intern_params).and_return(intern_attributes)
+      expect(Intern).to receive(:new).with(intern_attributes).and_return(intern)
+      expect(intern).to receive(:save).and_return(false)
+
+      post :create, params: {id: 'id', display_name: 'Intern 1'}
+
+      expect(response).to render_template('interns/new')
+    end
+  end
 
   describe 'DELETE destroy' do
     it 'should delete' do

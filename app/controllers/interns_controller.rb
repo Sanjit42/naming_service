@@ -43,7 +43,6 @@ class InternsController < ApplicationController
 
   def create
     @intern = Intern.new(intern_params)
-    @intern[:present_in_TW] = true
     if @intern.save
       redirect_to intern_path(@intern)
     else
