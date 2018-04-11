@@ -5,13 +5,13 @@ Rails.application.routes.draw do
 
   resources :interns do
     get 'search', :on => :collection
+    get 'bulk_import', :on => :collection
+    get 'csv', :on => :collection
     collection {post :import}
     member do
       post 'not_in_TW', 'present_in_TW'
     end
   end
-  get 'interns/bulkImport'
-  post 'interns/csv'
   get '', to: redirect('/interns')
   root 'interns#index'
 

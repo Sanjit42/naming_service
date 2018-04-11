@@ -14,13 +14,13 @@ class InternsController < ApplicationController
       @date = Date.today
       @file_name = params[:file].original_filename
       @interns = Intern.import(params[:file])
-      render 'interns/bulkImportResult'
+      render 'interns/bulk_import_result'
   end
 
   def csv
       @date = Date.today
       @interns = Intern.csv(params[:csv_data][:data])
-      render 'interns/bulkImportResult'
+      render 'interns/bulk_import_result'
   end
 
   def show
